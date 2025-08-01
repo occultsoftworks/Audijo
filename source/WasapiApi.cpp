@@ -40,8 +40,8 @@ namespace Audijo
 		// Get default devices
 		Pointer<IMMDevice> _defaultIn;
 		Pointer<IMMDevice> _defaultOut;
-		CHECK(m_DeviceEnumerator->GetDefaultAudioEndpoint(eCapture, eConsole, &_defaultIn), "Unable to retrieve the default input device");
-		CHECK(m_DeviceEnumerator->GetDefaultAudioEndpoint(eRender, eConsole, &_defaultOut), "Unable to retrieve the default output device");
+		CHECK(m_DeviceEnumerator->GetDefaultAudioEndpoint(eCapture, eConsole, &_defaultIn), "Unable to retrieve the default input device", return m_Devices);
+		CHECK(m_DeviceEnumerator->GetDefaultAudioEndpoint(eRender, eConsole, &_defaultOut), "Unable to retrieve the default output device", return m_Devices);
 
 		// Open the property store of the device to retrieve the name
 		Pointer<IPropertyStore> _defaultInPropertyStore;
