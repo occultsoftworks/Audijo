@@ -40,7 +40,7 @@ namespace Audijo
 		 * Get the device count.
 		 * @return device count
 		 */
-		int DeviceCount() const { return !m_Api ? 0 : m_Api->DeviceCount(); }
+		size_t DeviceCount() const { return !m_Api ? 0 : m_Api->DeviceCount(); }
 
 		/**
 		 * Get stream information. This call only returns useful information after the stream has been opened.
