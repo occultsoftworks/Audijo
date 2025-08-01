@@ -562,6 +562,8 @@ namespace Audijo
 		m_CaptureClient.Release();
 		m_RenderClient.Release(); 
 		m_Information.state = Closed;
+
+		return Error::NoError;
 	};
 
 	Error WasapiApi::SampleRate(double srate)

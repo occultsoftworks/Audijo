@@ -34,7 +34,7 @@ namespace Audijo
 		 * @param id device id
 		 * @return device with id
 		 */
-		const DeviceInfo<>& Device(int id) const { return m_Api->Device(id); }
+		const DeviceInfo<>* Device(int id) const { return m_Api->Device(id); }
 
 		/**
 		 * Get the device count.
