@@ -34,7 +34,7 @@ namespace Audijo
 		// Make a list of all numbers from 0 to amount of current devices
 		// this is used to determine if we need to delete devices from the list after querying.
 		std::vector<int> _toDelete;
-		for (int i = m_Devices.size() - 1; i >= 0; i--)
+		for (size_t i = m_Devices.size() - 1; i >= 0; i--)
 			_toDelete.push_back(i);
 
 		// Get default devices
