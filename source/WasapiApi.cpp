@@ -390,7 +390,7 @@ namespace Audijo
 						if (m_InputClient)
 						{
 							// Only pull if the ring buffer contains enough samples to fill the user buffer
-							if (_inRingBuffer.Size() >= _bufferSize * _nInChannels * (_deviceInFormat & Bytes))
+							if (_inRingBuffer.Size() >= static_cast<unsigned long long>(_bufferSize) * _nInChannels * (_deviceInFormat & Bytes))
 							{
 								// Get samples from ring buffer
 								for (int i = 0; i < _bufferSize; i++)
@@ -419,7 +419,7 @@ namespace Audijo
 					// If we've pull, it means the callback was called, so we need to handle the user output buffer
 					if (m_OutputClient && _pulled)
 					{
-						if (_outRingBuffer.Space() >= _bufferSize * _nOutChannels * (_deviceOutFormat & Bytes))
+						if (_outRingBuffer.Space() >= static_cast<unsigned long long>(_bufferSize) * _nOutChannels * (_deviceOutFormat & Bytes))
 						{
 							// First convert to the right format
 							for (int j = 0; j < _nOutChannels; j++)
@@ -461,7 +461,7 @@ namespace Audijo
 						CHECK(m_CaptureClient->GetBuffer(&_streamBuffer, &_inputFramesAvailable, &_flags, nullptr, nullptr), "Failed to retrieve input buffer.", goto Cleanup);
 
 						// If there is enough space in the input ring buffer, we'll enqueue it.
-						if (_inRingBuffer.Space() >= _inputFramesAvailable * _nInChannels * (_deviceInFormat & Bytes))
+						if (_inRingBuffer.Space() >= static_cast<unsigned long long>(_inputFramesAvailable) * _nInChannels * (_deviceInFormat & Bytes))
 						{
 							// Add the input data to the input ring buffer
 							for (uint32_t i = 0; i < _inputFramesAvailable * _nInChannels * (_deviceInFormat & Bytes); i++)
@@ -484,7 +484,7 @@ namespace Audijo
 						_outputFramesAvailable -= _framePadding;
 
 						// If we have enough data to write to the device from the output ring buffer
-						if (_outputFramesAvailable != 0 && _outRingBuffer.Size() >= _outputFramesAvailable * _nOutChannels * (_deviceOutFormat & Bytes))
+						if (_outputFramesAvailable != 0 && _outRingBuffer.Size() >= static_cast<unsigned long long>(_outputFramesAvailable) * _nOutChannels * (_deviceOutFormat & Bytes))
 						{
 							// Get the buffer
 							CHECK(m_RenderClient->GetBuffer(_outputFramesAvailable, &_streamBuffer), "Failed to retrieve output buffer.", goto Cleanup);
