@@ -58,8 +58,8 @@ namespace Audijo
 		PropVariantInit(_defaultOutDeviceNameProp);
 		CHECK(_defaultInPropertyStore->GetValue(PKEY_Device_FriendlyName, _defaultInDeviceNameProp), "Unable to retrieve default device name.", return m_Devices);
 		CHECK(_defaultOutPropertyStore->GetValue(PKEY_Device_FriendlyName, _defaultOutDeviceNameProp), "Unable to retrieve default device name.", return m_Devices);
-		wcstombs(_defaultInNameArr, _defaultInDeviceNameProp->pwszVal, 64); // Copy the wstring to the char array
-		wcstombs(_defaultOutNameArr, _defaultOutDeviceNameProp->pwszVal, 64); // Copy the wstring to the char array
+		errno_t errCode = 	wcstombs_s(nullptr, _defaultInNameArr, sizeof(_defaultInNameArr), _defaultInDeviceNameProp->pwszVal, sizeof(_defaultInNameArr)); // Copy the wstring to the char array
+		errCode = 			wcstombs_s(nullptr, _defaultOutNameArr, sizeof(_defaultOutNameArr), _defaultOutDeviceNameProp->pwszVal, sizeof(_defaultOutNameArr)); // Copy the wstring to the char array
 		std::string _defaultInName = _defaultInNameArr;
 		std::string _defaultOutName = _defaultOutNameArr;
 
@@ -85,7 +85,8 @@ namespace Audijo
 			Pointer<PROPVARIANT> _deviceNameProp = new PROPVARIANT;
 			PropVariantInit(_deviceNameProp);
 			CHECK(_propertyStore->GetValue(PKEY_Device_FriendlyName, _deviceNameProp), "Unable to retrieve device name.", continue);
-			wcstombs(_nameArr, _deviceNameProp->pwszVal, 64); // Copy the wstring to the char array
+			const size_t nameArrSize = sizeof(_nameArr);
+			errCode = wcstombs_s(nullptr, _nameArr, nameArrSize, _deviceNameProp->pwszVal, nameArrSize); // Copy the wstring to the char array
 			std::string _name = _nameArr;
 
 			// Get the audio client from the device
