@@ -33,8 +33,8 @@ namespace Audijo
 
 		// Make a list of all numbers from 0 to amount of current devices
 		// this is used to determine if we need to delete devices from the list after querying.
-		std::vector<int> _toDelete;
-		for (size_t i = m_Devices.size() - 1; i >= 0; i--)
+		std::vector<uint64_t> _toDelete;
+		for (uint64_t i = m_Devices.size() - 1; i >= 0; i--)
 			_toDelete.push_back(i);
 
 		// Get default devices
@@ -64,13 +64,13 @@ namespace Audijo
 		std::string _defaultOutName = _defaultOutNameArr;
 
 		// Count devices
-		unsigned int _count = 0;
+		uint32_t _count = 0;
 		m_WasapiDevices.Release();
 		CHECK(m_DeviceEnumerator->EnumAudioEndpoints(eAll, DEVICE_STATE_ACTIVE, &m_WasapiDevices), "Unable to retrieve device collection.", return m_Devices);
 		CHECK(m_WasapiDevices->GetCount(&_count), "Unable to retrieve device count.", return m_Devices);
 		
 		// Go through all devices
-		for (int i = 0; i < _count; i++)
+		for (uint32_t i = 0; i < _count; i++)
 		{
 			// First get the device from the device collection
 			Pointer<IMMDevice> _dev;
@@ -119,7 +119,7 @@ namespace Audijo
 
 			// Edit an existing device, or if doesn't exist, just add new device.
 			bool _found = false;
-			int _index = 0;
+			uint64_t _index = 0;
 			for (auto& _device : m_Devices)
 			{
 				if (_device.name == _name && _device.id == i)
@@ -139,7 +139,7 @@ namespace Audijo
 			}
 
 			if (!_found)
-				m_Devices.push_back(DeviceInfo<Wasapi>{ { i, _name, _in, _out, _srates, _default, Wasapi } });
+				m_Devices.push_back(DeviceInfo<Wasapi>{ { (int) i, _name, _in, _out, _srates, _default, Wasapi } });
 		}
 
 		// Delete all devices we couldn't find again.
@@ -181,7 +181,7 @@ namespace Audijo
 		int _nOutChannels = m_Information.outputChannels;
 		int _nChannels = _nInChannels + _nOutChannels;
 		int _bufferSize = m_Information.bufferSize;
-		int _sampleRate = m_Information.sampleRate;
+		int _sampleRate = (int) m_Information.sampleRate;
 
 		if (_inDeviceId != NoDevice)
 		{
@@ -464,7 +464,7 @@ namespace Audijo
 						if (_inRingBuffer.Space() >= _inputFramesAvailable * _nInChannels * (_deviceInFormat & Bytes))
 						{
 							// Add the input data to the input ring buffer
-							for (int i = 0; i < _inputFramesAvailable * _nInChannels * (_deviceInFormat & Bytes); i++)
+							for (uint32_t i = 0; i < _inputFramesAvailable * _nInChannels * (_deviceInFormat & Bytes); i++)
 								_inRingBuffer.Enqueue(_streamBuffer[i]);
 
 							CHECK(m_CaptureClient->ReleaseBuffer(_inputFramesAvailable), "Unable to release capture buffer", goto Cleanup);
@@ -490,7 +490,7 @@ namespace Audijo
 							CHECK(m_RenderClient->GetBuffer(_outputFramesAvailable, &_streamBuffer), "Failed to retrieve output buffer.", goto Cleanup);
 
 							// Put data in the output device buffer
-							for (int i = 0; i < _outputFramesAvailable * _nOutChannels * (_deviceOutFormat & Bytes); i++)
+							for (uint32_t i = 0; i < _outputFramesAvailable * _nOutChannels * (_deviceOutFormat & Bytes); i++)
 								_streamBuffer[i] = _outRingBuffer.Dequeue();
 							
 							CHECK(m_RenderClient->ReleaseBuffer(_outputFramesAvailable, 0), "Unable to release capture buffer", goto Cleanup);
